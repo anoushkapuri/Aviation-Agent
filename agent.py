@@ -83,7 +83,7 @@ class AviationAgent:
                 llm=ChatOpenAI(
                     temperature=0.3,  # Lower temperature for more focused, policy-based responses
                     openai_api_key=self.openai_api_key,
-                    model_name="gpt-4"
+                    model_name="gpt-4.1-nano"
                 ),
                 retriever=self.vector_store.as_retriever(
                     search_kwargs={"k": 4}  # Retrieve top 4 most relevant chunks
