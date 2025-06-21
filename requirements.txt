@@ -1,10 +1,10 @@
 streamlit==1.32.0
-langchain>=0.1.12
-langchain-community>=0.0.28
-langchain-core>=0.1.27
-openai==1.14.0
+langchain==0.1.12
+langchain-community==0.0.28
+langchain-openai==0.1.6
+openai==1.24.0
 PyPDF2==3.0.1
 # faiss-cpu==1.7.4  # Installed via Homebrew
 python-dotenv==1.0.1
-pydantic>=2.6.1
-langsmith>=0.1.22 
+pydantic==2.6.1
+langsmith==0.1.22 

@@ -1,6 +1,6 @@
 ##This is the file where the agent is defined using OPEN AI GPT-4o model
 
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
 from langchain.prompts import PromptTemplate, ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
@@ -83,7 +83,7 @@ class AviationAgent:
                 llm=ChatOpenAI(
                     temperature=0.3,  # Lower temperature for more focused, policy-based responses
                     openai_api_key=self.openai_api_key,
-                    model_name="gpt-4.1-nano"
+                    model_name="gpt-4o-mini"
                 ),
                 retriever=self.vector_store.as_retriever(
                     search_kwargs={"k": 4}  # Retrieve top 4 most relevant chunks
