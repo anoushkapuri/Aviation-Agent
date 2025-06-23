@@ -1,7 +1,6 @@
 import streamlit as st
 import os
 from agent import AviationAgent
-import tempfile
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -49,7 +48,7 @@ def auto_load_documents():
 
 def main():
     st.title("✈️ Aviation Document Analysis")
-    st.write("Upload aviation planning documents and ask questions about them!")
+    st.write("Ask questions about aviation planning documents!")
 
     # Initialize agent if not already done
     if st.session_state.agent is None:
@@ -61,62 +60,15 @@ def main():
 
     # Auto-load documents from default directory if not already attempted
     if not st.session_state.auto_load_attempted and not st.session_state.documents_loaded:
-        with st.spinner("Loading pre-existing documents from default directory..."):
+        with st.spinner("Loading aviation documents..."):
             if auto_load_documents():
-                st.success("✅ Pre-existing documents loaded successfully! You can now ask questions.")
+                st.success("✅ Documents loaded successfully! You can now ask questions.")
             else:
-                st.warning("⚠️ Could not load pre-existing documents. You can upload files manually or try the button below.")
+                st.error("❌ Failed to load documents. Please check your setup.")
         st.session_state.auto_load_attempted = True
 
-    # File upload section (still available for additional documents)
-    st.subheader("📁 Upload Additional Documents (Optional)")
-    st.write("You can upload additional PDF documents if needed. Pre-existing documents are already loaded.")
-    
-    uploaded_files = st.file_uploader(
-        "Upload additional PDF documents",
-        type=["pdf"],
-        accept_multiple_files=True
-    )
-
-    # Button to reload documents from default directory
-    col1, col2 = st.columns([1, 3])
-    with col1:
-        if st.button("🔄 Reload Default Documents"):
-            with st.spinner("Reloading documents from default directory..."):
-                try:
-                    success = st.session_state.agent.load_documents(directory_path=None)
-                    if success:
-                        st.session_state.documents_loaded = True
-                        st.success("Documents reloaded successfully!")
-                    else:
-                        st.error("Failed to reload documents from default directory.")
-                except Exception as e:
-                    st.error(f"Error reloading documents: {str(e)}")
-
-    # Process uploaded files if any
-    if uploaded_files:
-        with st.spinner("Processing additional documents..."):
-            try:
-                # Create a temporary directory to store uploaded files
-                with tempfile.TemporaryDirectory() as temp_dir:
-                    # Save uploaded files to temporary directory
-                    for uploaded_file in uploaded_files:
-                        file_path = os.path.join(temp_dir, uploaded_file.name)
-                        with open(file_path, "wb") as f:
-                            f.write(uploaded_file.getvalue())
-                    
-                    # Load documents into the agent
-                    success = st.session_state.agent.load_documents(directory_path=temp_dir)
-                    if success:
-                        st.session_state.documents_loaded = True
-                        st.success("Additional documents processed successfully!")
-                    else:
-                        st.error("Failed to process additional documents.")
-            except Exception as e:
-                st.error(f"Error processing documents: {str(e)}")
-
     # Chat interface
-    st.subheader("💬 Ask questions about the documents")
+    st.subheader("💬 Ask questions about the aviation documents")
     
     # Display chat history
     for message in st.session_state.chat_history:
@@ -124,9 +76,9 @@ def main():
             st.write(message["content"])
 
     # Chat input
-    if prompt := st.chat_input("Ask a question about the documents"):
+    if prompt := st.chat_input("Ask a question about the aviation documents"):
         if not st.session_state.documents_loaded:
-            st.warning("Please wait for documents to load or upload some documents first!")
+            st.warning("Please wait for documents to load or check your setup!")
             return
 
         # Add user message to chat history
@@ -137,7 +89,7 @@ def main():
             st.write(prompt)
 
         # Get agent response
-        with st.spinner("Thinking..."):
+        with st.spinner("Analyzing documents..."):
             try:
                 response = st.session_state.agent.ask_question(prompt)
                 
@@ -150,9 +102,11 @@ def main():
                     
                     # Display source documents if available
                     if response["source_documents"]:
-                        with st.expander("View Source Documents"):
-                            for doc in response["source_documents"]:
+                        with st.expander("📄 View Source Documents"):
+                            for i, doc in enumerate(response["source_documents"], 1):
+                                st.markdown(f"**Source {i}:**")
                                 st.write(doc.page_content)
+                                st.divider()
             except Exception as e:
                 st.error(f"Error getting response: {str(e)}")
 
