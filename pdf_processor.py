@@ -5,7 +5,7 @@ import PyPDF2
 from typing import List, Dict, Optional
 import os
 import logging
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 
