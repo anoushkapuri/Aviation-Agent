@@ -20,18 +20,19 @@ The application consists of several key components:
    - Implements a ConversationalRetrievalChain for intelligent document Q&A
 
 3. **Streamlit Interface** (`streamlit_app.py`):
-   - Provides a modern web interface for document upload and interaction
-   - Supports multiple document uploads
+   - Provides a modern web interface for document interaction
+   - **Automatically loads pre-existing documents** from the default directory
+   - Supports additional document uploads for enhanced analysis
    - Features a chat-like interface for Q&A
    - Displays source documents for answers
-   - Includes a default document directory option
 
 ## Features
 
+- **Automatic document loading** - Pre-existing PDFs are loaded automatically
 - PDF document processing with intelligent text extraction
 - OpenAI GPT-4 powered document analysis
 - Interactive chat interface with conversation history
-- Support for multiple document uploads
+- Support for additional document uploads
 - Source document tracking and citation
 - Default document directory support
 - Both web interface (Streamlit) and CLI modes available
@@ -66,6 +67,11 @@ The application consists of several key components:
    ```
    Get your API key from [OpenAI's website](https://platform.openai.com/api-keys)
 
+6. **Add your PDF documents** to the `test_pdfs` directory (optional):
+   - The application comes with sample documents
+   - You can add your own aviation PDFs to this directory
+   - Documents will be automatically loaded when you start the app
+
 ## Running the Application
 
 You can run the application in two modes:
@@ -73,7 +79,7 @@ You can run the application in two modes:
 ### 1. Web Interface (Streamlit)
 
 ```bash
-# Method 1: Using the manager script
+# Method 1: Using the manager script (recommended)
 python manager.py
 # Select option 2 when prompted
 
@@ -82,6 +88,8 @@ streamlit run streamlit_app.py
 ```
 
 The web interface will be available at http://localhost:8501
+
+**✨ New Feature**: Documents are now automatically loaded when you start the app!
 
 ### 2. Command Line Interface
 
@@ -94,27 +102,31 @@ python manager.py
 
 1. **Web Interface**:
    - Launch the application using one of the methods above
-   - Upload PDF documents using the file uploader
-   - Alternatively, use the "Load Documents from Default Directory" button
-   - Start asking questions in the chat interface
+   - **Documents are automatically loaded** - no manual upload required!
+   - You can upload additional PDF documents if needed
+   - Start asking questions immediately in the chat interface
    - View source documents for answers in the expandable sections
 
 2. **Command Line Interface**:
    - Launch the CLI mode
-   - Documents will be automatically loaded from the default directory
+   - Documents are automatically loaded from the default directory
    - Type your questions and press Enter
    - Type 'exit' to quit
 
 ## Default Document Directory
 
-The application creates a `test_pdfs` directory in the project root. You can place PDF documents here for automatic loading.
+The application uses a `test_pdfs` directory in the project root. **Documents in this directory are automatically loaded** when you start the application, so you don't need to upload them every time.
+
+- **Pre-existing documents**: The app comes with sample aviation documents
+- **Add your own**: Place additional PDF files in the `test_pdfs` directory
+- **Automatic loading**: No manual intervention required
 
 ## Requirements
 
 - Python 3.8 or higher
 - OpenAI API key
 - FAISS vector database
-- PDF documents to analyze
+- PDF documents to analyze (pre-loaded or uploaded)
 - Internet connection for API access
 
 ## Dependencies
