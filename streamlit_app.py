@@ -15,6 +15,58 @@ st.set_page_config(
     layout="wide"
 )
 
+# Custom CSS for styling
+st.markdown("""
+    <style>
+    /* General styling */
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f9f9f9;
+    }
+    .stApp {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    /* Header styling */
+    .main-header {
+        font-size: 32px;
+        font-weight: bold;
+        color: #333333;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .sub-header {
+        font-size: 18px;
+        color: #555555;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+    /* Chat bubbles */
+    .user-bubble {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 15px;
+        margin: 5px 0;
+        text-align: right;
+        max-width: 70%;
+        margin-left: auto;
+    }
+    .assistant-bubble {
+        background-color: #e9ecef;
+        color: #333333;
+        padding: 10px 15px;
+        border-radius: 15px;
+        margin: 5px 0;
+        text-align: left;
+        max-width: 70%;
+        margin-right: auto;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 # Initialize session state
 if "agent" not in st.session_state:
     st.session_state.agent = None
@@ -86,8 +138,8 @@ def auto_load_documents():
         return False
 
 def main():
-    st.title("✈️ Aviation Document Analysis")
-    st.write("Ask questions about aviation planning documents!")
+    st.markdown('<div class="main-header">✈️ Aviation Document Analysis</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">Ask questions about aviation planning documents!</div>', unsafe_allow_html=True)
 
     # Initialize agent if not already done
     if st.session_state.agent is None:
@@ -114,12 +166,14 @@ def main():
         st.session_state.auto_load_attempted = True
 
     # Chat interface
-    st.subheader("💬 Ask questions about the aviation documents")
+    st.subheader("💬 Chat with the Aviation Agent")
     
     # Display chat history
     for message in st.session_state.chat_history:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+        if message["role"] == "user":
+            st.markdown(f'<div class="user-bubble">{message["content"]}</div>', unsafe_allow_html=True)
+        else:
+            st.markdown(f'<div class="assistant-bubble">{message["content"]}</div>', unsafe_allow_html=True)
 
     # Chat input
     if prompt := st.chat_input("Ask a question about the aviation documents"):
@@ -131,8 +185,7 @@ def main():
         st.session_state.chat_history.append({"role": "user", "content": prompt})
         
         # Display user message
-        with st.chat_message("user"):
-            st.write(prompt)
+        st.markdown(f'<div class="user-bubble">{prompt}</div>', unsafe_allow_html=True)
 
         # Get agent response
         with st.spinner("Analyzing documents..."):
@@ -143,18 +196,17 @@ def main():
                 st.session_state.chat_history.append({"role": "assistant", "content": response["answer"]})
                 
                 # Display assistant message
-                with st.chat_message("assistant"):
-                    st.write(response["answer"])
-                    
-                    # Display source documents if available
-                    if response["source_documents"]:
-                        with st.expander("📄 View Source Documents"):
-                            for i, doc in enumerate(response["source_documents"], 1):
-                                st.markdown(f"**Source {i}:**")
-                                st.write(doc.page_content)
-                                st.divider()
+                st.markdown(f'<div class="assistant-bubble">{response["answer"]}</div>', unsafe_allow_html=True)
+                
+                # Display source documents if available
+                if response["source_documents"]:
+                    with st.expander("📄 View Source Documents"):
+                        for i, doc in enumerate(response["source_documents"], 1):
+                            st.markdown(f"**Source {i}:**")
+                            st.write(doc.page_content)
+                            st.divider()
             except Exception as e:
                 st.error(f"Error getting response: {str(e)}")
 
 if __name__ == "__main__":
-    main() 
+    main()
