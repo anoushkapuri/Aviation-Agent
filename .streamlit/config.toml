@@ -1,0 +1,17 @@
+[theme]
+# Force light theme for all users
+base = "light"
+primaryColor = "#0066cc"
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f5f5f5"
+textColor = "#212529"
+
+[server]
+# Server configuration
+headless = true
+enableCORS = false
+enableXsrfProtection = true
+
+[browser]
+# Disable usage stats
+gatherUsageStats = false
