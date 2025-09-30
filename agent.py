@@ -103,6 +103,25 @@ class AviationAgent:
         if not self.qa_chain:
             raise ValueError("No documents loaded. Please load documents first using load_documents().")
         
+        # Check if this is a casual greeting or non-aviation question
+        casual_greetings = ["hi", "hello", "hey", "good morning", "good afternoon", "good evening", "how are you", "what's up"]
+        question_lower = question.lower().strip()
+        
+        # If it's a casual greeting, respond conversationally
+        if any(greeting in question_lower for greeting in casual_greetings):
+            return {
+                "answer": "Hello! I'm the Arup Aviation Intelligence assistant. I'm here to help you with questions about aviation planning, airport design, and regulatory compliance. What would you like to know about aviation standards or planning requirements?",
+                "source_documents": []
+            }
+        
+        # Check if the question is clearly not aviation-related
+        non_aviation_keywords = ["weather", "news", "sports", "food", "movie", "music", "travel", "shopping"]
+        if any(keyword in question_lower for keyword in non_aviation_keywords) and not any(aviation_word in question_lower for aviation_word in ["airport", "aviation", "aircraft", "runway", "taxiway", "terminal", "airspace", "navigation", "approach", "departure"]):
+            return {
+                "answer": "I'm specialized in aviation planning and airport design. I can help you with questions about aviation standards, airport infrastructure, regulatory compliance, and planning requirements. Is there something specific about aviation you'd like to know?",
+                "source_documents": []
+            }
+        
         try:
             response = self.qa_chain.invoke({"question": question})
             return {

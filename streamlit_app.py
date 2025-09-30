@@ -2,6 +2,7 @@ import streamlit as st
 import os
 import hashlib
 import time
+import json
 from agent import AviationAgent
 from dotenv import load_dotenv
 
@@ -28,7 +29,7 @@ st.markdown("""
         --secondary-color: #004499;
         --accent-color: #ff6b35;
         --bg-primary: #ffffff;
-        --bg-secondary: #f8f9fa;
+        --bg-secondary: #f5f5f5;
         --bg-tertiary: #ffffff;
         --text-primary: #212529;
         --text-secondary: #6c757d;
@@ -46,7 +47,7 @@ st.markdown("""
     
     /* Main app background */
     .stApp {
-        background: linear-gradient(135deg, var(--bg-primary) 0%, #f8f9fa 100%);
+        background: transparent;
         color: var(--text-primary);
     }
     
@@ -66,7 +67,7 @@ st.markdown("""
     .stAlert > div, .stException > div, .stMarkdown > div, 
     .stText > div, .stCode > div, .stDataFrame > div {
         color: var(--text-primary) !important;
-        background: var(--bg-secondary) !important;
+        background: transparent !important;
     }
     
     /* Make all text elements white */
@@ -89,6 +90,7 @@ st.markdown("""
         text-align: center;
         margin-bottom: 0.5rem;
         letter-spacing: -0.02em;
+        background: transparent !important;
     }
     
     .sub-header {
@@ -97,6 +99,7 @@ st.markdown("""
         text-align: center;
         margin-bottom: 2rem;
         font-weight: 400;
+        background: transparent !important;
     }
     
     /* Status indicators */
@@ -131,7 +134,7 @@ st.markdown("""
     
     /* Chat container */
     .chat-container {
-        background: var(--bg-secondary);
+        background: transparent;
         border-radius: 16px;
         padding: 1.5rem;
         margin: 1rem 0;
@@ -141,33 +144,51 @@ st.markdown("""
     
     /* Chat bubbles with smooth animations */
     .user-bubble {
-        background: var(--primary-color);
-        color: white;
+        background: #ff0000 !important;
+        color: white !important;
         padding: 1rem 1.25rem;
         border-radius: 18px 18px 4px 18px;
         margin: 0.75rem 0;
         text-align: right;
+        width: fit-content;
         max-width: 75%;
         margin-left: auto;
-        box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
+        box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
         animation: slideInRight 0.3s ease-out;
         font-weight: 500;
         line-height: 1.5;
     }
     
     .assistant-bubble {
-        background: var(--bg-tertiary);
-        color: var(--text-primary);
+        background: #6c757d !important;
+        color: white !important;
         padding: 1rem 1.25rem;
         border-radius: 18px 18px 18px 4px;
         margin: 0.75rem 0;
         text-align: left;
         max-width: 85%;
         margin-right: auto;
-        border: 1px solid var(--border-color);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 1px solid #5a6268;
+        box-shadow: 0 4px 12px rgba(108, 117, 125, 0.2);
         animation: slideInLeft 0.3s ease-out;
         line-height: 1.6;
+    }
+    
+    /* Ensure all text inside chat bubbles is white */
+    .user-bubble *, .assistant-bubble * {
+        color: white !important;
+    }
+    
+    .user-bubble p, .assistant-bubble p {
+        color: white !important;
+    }
+    
+    .user-bubble span, .assistant-bubble span {
+        color: white !important;
+    }
+    
+    .user-bubble div, .assistant-bubble div {
+        color: white !important;
     }
     
     /* Animations */
@@ -223,7 +244,7 @@ st.markdown("""
     }
     
     .source-doc-item {
-        background: var(--bg-secondary);
+        background: transparent;
         border-radius: 8px;
         padding: 1rem;
         margin: 0.5rem 0;
@@ -251,7 +272,7 @@ st.markdown("""
     
     /* Chat input container styling */
     .stChatInput > div {
-        background: var(--bg-secondary) !important;
+        background: transparent !important;
         border-radius: 16px !important;
         padding: 1rem !important;
         border: 1px solid var(--border-color) !important;
@@ -260,8 +281,8 @@ st.markdown("""
     }
     
     .stChatInput > div > div > div > div > input {
-        background: var(--bg-tertiary) !important;
-        border: 1px solid var(--border-color) !important;
+        background: white !important;
+        border: 1px solid #dee2e6 !important;
         color: var(--text-primary) !important;
         border-radius: 12px !important;
         padding: 0.75rem 1rem !important;
@@ -276,7 +297,7 @@ st.markdown("""
         border-color: var(--primary-color) !important;
         box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2) !important;
         outline: none !important;
-        background: var(--bg-tertiary) !important;
+        background: white !important;
         color: var(--text-primary) !important;
     }
     
@@ -289,7 +310,7 @@ st.markdown("""
     /* Ensure all chat input text is visible */
     .stChatInput, .stChatInput *, .stChatInput input, .stChatInput textarea {
         color: var(--text-primary) !important;
-        background-color: var(--bg-tertiary) !important;
+        background-color: white !important;
     }
     
     /* Chat input label styling */
@@ -353,7 +374,7 @@ st.markdown("""
     
     /* Comprehensive Streamlit white theme */
     .stApp > div {
-        background: var(--bg-primary) !important;
+        background: transparent !important;
         color: var(--text-primary) !important;
     }
     
@@ -373,7 +394,7 @@ st.markdown("""
     
     /* Streamlit status messages */
     .stSuccess, .stInfo, .stWarning, .stError {
-        background: var(--bg-secondary) !important;
+        background: transparent !important;
         border: 1px solid var(--border-color) !important;
         color: var(--text-primary) !important;
     }
@@ -401,7 +422,7 @@ st.markdown("""
     
     /* Streamlit expander */
     .stExpander > div {
-        background: var(--bg-secondary) !important;
+        background: transparent !important;
         border: 1px solid var(--border-color) !important;
         color: var(--text-primary) !important;
     }
@@ -419,7 +440,7 @@ st.markdown("""
     
     /* Streamlit tabs */
     .stTabs > div {
-        background: var(--bg-secondary) !important;
+        background: transparent !important;
         border: 1px solid var(--border-color) !important;
     }
     
@@ -430,14 +451,14 @@ st.markdown("""
     
     /* Streamlit sidebar */
     .stSidebar > div {
-        background: var(--bg-secondary) !important;
+        background: transparent !important;
         border-right: 1px solid var(--border-color) !important;
         color: var(--text-primary) !important;
     }
     
     /* Streamlit dataframe */
     .stDataFrame {
-        background: var(--bg-secondary) !important;
+        background: transparent !important;
         color: var(--text-primary) !important;
     }
     
@@ -450,11 +471,11 @@ st.markdown("""
     
     /* Override any remaining white backgrounds */
     div[data-testid="stApp"] {
-        background: var(--bg-primary) !important;
+        background: transparent !important;
     }
     
     div[data-testid="stApp"] > div {
-        background: var(--bg-primary) !important;
+        background: transparent !important;
         color: var(--text-primary) !important;
     }
     
@@ -476,7 +497,7 @@ st.markdown("""
     
     /* Metrics and info boxes */
     .metric-card {
-        background: var(--bg-secondary);
+        background: transparent;
         border-radius: 12px;
         padding: 1.5rem;
         border: 1px solid var(--border-color);
@@ -557,11 +578,39 @@ st.markdown("""
     </script>
 """, unsafe_allow_html=True)
 
+# Chat history storage functions
+def save_chat_history(chat_history):
+    """Save chat history to a local file."""
+    try:
+        with open('chat_history.json', 'w') as f:
+            json.dump(chat_history, f)
+    except Exception as e:
+        st.error(f"Error saving chat history: {str(e)}")
+
+def load_chat_history():
+    """Load chat history from local file."""
+    try:
+        if os.path.exists('chat_history.json'):
+            with open('chat_history.json', 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        st.error(f"Error loading chat history: {str(e)}")
+    return []
+
+def clear_chat_history():
+    """Clear chat history from both session state and file."""
+    st.session_state.chat_history = []
+    try:
+        if os.path.exists('chat_history.json'):
+            os.remove('chat_history.json')
+    except Exception as e:
+        st.error(f"Error clearing chat history: {str(e)}")
+
 # Initialize session state
 if "agent" not in st.session_state:
     st.session_state.agent = None
 if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+    st.session_state.chat_history = load_chat_history()  # Load from file
 if "documents_loaded" not in st.session_state:
     st.session_state.documents_loaded = False
 if "auto_load_attempted" not in st.session_state:
@@ -601,7 +650,6 @@ def load_documents_cached(_agent, pdf_hash):
     """Load and process documents with Streamlit caching. Uses pdf_hash to invalidate cache when files change."""
     success = _agent.load_documents(directory_path=None)
     if success:
-        st.success("✅ Documents processed and cached successfully!")
         return True
     else:
         st.error("❌ Failed to load documents")
@@ -629,7 +677,7 @@ def auto_load_documents():
 
 def main():
     # Professional header with gradient text
-    st.markdown('<div class="main-header">Aviation Intelligence Platform</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-header">Arup Aviation Intelligence</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-header">Advanced Document Analysis for Aviation Planning Teams</div>', unsafe_allow_html=True)
 
     # Initialize agent if not already done
@@ -642,55 +690,27 @@ def main():
 
     # Auto-load documents from default directory if not already attempted
     if not st.session_state.auto_load_attempted and not st.session_state.documents_loaded:
-        with st.spinner("🔄 Initializing aviation document analysis..."):
-            # Check if this is likely a cached load
-            start_time = time.time()
-            if auto_load_documents():
-                load_time = time.time() - start_time
-                if load_time < 2.0:
-                    st.markdown('<div class="status-indicator status-success">⚡ System Ready - Documents loaded from cache (No API costs)</div>', unsafe_allow_html=True)
-                else:
-                    st.markdown('<div class="status-indicator status-success">✅ System Ready - Documents processed and cached for future use</div>', unsafe_allow_html=True)
-                st.markdown('<div class="status-indicator status-success">💡 Subsequent loads will be instant and cost-free</div>', unsafe_allow_html=True)
-            else:
+        with st.spinner("🔄 Loading documents..."):
+            if not auto_load_documents():
                 st.markdown('<div class="status-indicator status-error">❌ Failed to load documents. Please check your setup.</div>', unsafe_allow_html=True)
         st.session_state.auto_load_attempted = True
 
-    # System status and metrics
-    if st.session_state.documents_loaded:
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            st.markdown("""
-            <div class="metric-card">
-                <div class="metric-value">✓</div>
-                <div class="metric-label">System Status</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col2:
-            st.markdown("""
-            <div class="metric-card">
-                <div class="metric-value">AI</div>
-                <div class="metric-label">Powered</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col3:
-            st.markdown("""
-            <div class="metric-card">
-                <div class="metric-value">📊</div>
-                <div class="metric-label">Real-time</div>
-            </div>
-            """, unsafe_allow_html=True)
-        with col4:
-            st.markdown("""
-            <div class="metric-card">
-                <div class="metric-value">🔒</div>
-                <div class="metric-label">Secure</div>
-            </div>
-            """, unsafe_allow_html=True)
+    # System status (simplified)
+    # Removed system ready message
 
-    # Chat interface with professional styling
-    st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-    st.markdown("### 💬 Intelligent Document Assistant", unsafe_allow_html=True)
+    # Chat interface
+    # Add clear chat button if there's chat history
+    if st.session_state.chat_history:
+        col1, col2 = st.columns([3, 1])
+        with col1:
+            st.markdown("### 💬 Intelligent Document Assistant", unsafe_allow_html=True)
+        with col2:
+            if st.button("🗑️ Clear Chat", help="Clear conversation history"):
+                clear_chat_history()
+                st.rerun()
+    else:
+        st.markdown("### 💬 Intelligent Document Assistant", unsafe_allow_html=True)
+    
     st.markdown("Ask questions about aviation planning, regulations, and design standards.")
     
     # Display chat history with smooth animations
@@ -710,6 +730,7 @@ def main():
 
         # Add user message to chat history
         st.session_state.chat_history.append({"role": "user", "content": prompt})
+        save_chat_history(st.session_state.chat_history)  # Save to file
         
         # Display user message with animation
         st.markdown(f'<div class="user-bubble">{prompt}</div>', unsafe_allow_html=True)
@@ -721,6 +742,7 @@ def main():
                 
                 # Add assistant message to chat history
                 st.session_state.chat_history.append({"role": "assistant", "content": response["answer"]})
+                save_chat_history(st.session_state.chat_history)  # Save to file
                 
                 # Display assistant message with animation
                 st.markdown(f'<div class="assistant-bubble">{response["answer"]}</div>', unsafe_allow_html=True)
@@ -742,14 +764,10 @@ def main():
             except Exception as e:
                 st.markdown(f'<div class="status-indicator status-error">❌ Error processing request: {str(e)}</div>', unsafe_allow_html=True)
     
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Footer with professional branding
-    st.markdown("---")
+    # Footer with simple branding - moved below chat input
     st.markdown("""
-    <div style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 2rem;">
-        <p>Aviation Intelligence Platform • Powered by Advanced AI • Secure & Compliant</p>
-        <p style="font-size: 0.8rem;">© 2024 Aviation Planning Solutions</p>
+    <div style="text-align: center; color: var(--text-muted); font-size: 0.9rem; margin-top: 1rem;">
+        <p>Built for Arup by Anoushka Puri. Please double-check AI responses.</p>
     </div>
     """, unsafe_allow_html=True)
 
