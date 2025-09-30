@@ -6,6 +6,7 @@ langchain-core
 langchain-text-splitters
 openai>=1.14.0
 PyPDF2>=3.0.1
+PyCryptodome>=3.15.0
 faiss-cpu>=1.7.4
 python-dotenv>=1.0.1
 pydantic>=2.6.1
